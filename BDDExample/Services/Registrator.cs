@@ -23,7 +23,7 @@ namespace BDDExample.Services
     {
         public virtual Application ValidateApplication(Application app)
         {
-            app.HasBeenValidated = true;
+            app.IsValid = true;
             return app;
         }
         public RegistrationResult ApplyForMembership(Application app)

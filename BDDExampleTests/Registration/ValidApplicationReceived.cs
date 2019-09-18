@@ -19,7 +19,7 @@ namespace BDDExampleTests.Registration
         public ValidApplicationReceived()
         {
             _reg = new Registrator();
-            var app = new Application();
+            var app = new Application(email: "g.chaniotakis@bewise.gr", password:"password",confirm:"password");
             _result = _reg.ApplyForMembership(app);
             _user = _result.NewUser;
         }
@@ -59,7 +59,7 @@ namespace BDDExampleTests.Registration
         [Fact(DisplayName ="Application is Validated")]
         public void ApplicationValidated()
         {
-            Assert.True(_result.Application.HasBeenValidated);
+            Assert.True(_result.Application.IsValid);
         }
        
     }

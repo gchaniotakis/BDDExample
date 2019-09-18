@@ -2,22 +2,30 @@
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
+using BDDExample.Services;
+using BDDExample.Models;
 
 namespace BDDExampleTests.Registration
 {
     [Trait("An application is received with empty email or password", "")]
     public class EmptyEmailOrPassword
     {
-        [Fact(DisplayName = "Application considered invalid")]
-        public void ApplicationInvalid()
+        RegistrationResult _result;
+        public EmptyEmailOrPassword()
         {
-            throw new NotImplementedException("Implement me");
+            var app = new Application("","password","password");
         }
 
-        [Fact(DisplayName = "A message is returned")]
+        [Fact(DisplayName = "An exception is thrown with empty email")]
+        public void ApplicationInvalid()
+        {
+            Assert.Throws<InvalidOperationException>(() => new Application("", "password", "password"));
+        }
+
+        [Fact(DisplayName = "An exception is thrown with empty password")]
         public void MessageReturned()
         {
-            throw new NotImplementedException("Implement me");
+            Assert.Throws<InvalidOperationException>(() => new Application("g.chaniotakis@bewise.gr", "", "password"));
         }
     }
 }

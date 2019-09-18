@@ -6,7 +6,7 @@ using Xunit;
 namespace BDDExampleTests.Registration
 {
     [Trait("An Invalid Application was received", "")]
-    public class InvalidApplicationReceived
+    public class ApplicationValidations
     {
         [Fact(DisplayName = "Application is Denied")]
         public void UserDenied()

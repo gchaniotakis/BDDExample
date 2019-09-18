@@ -6,18 +6,31 @@ namespace BDDExample.Models
 {
     public class Application
     {
-        public bool HasBeenValidated { get; set; }
+        public bool IsValid { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Confirmation { get; set; }
+        public ApplicationStatus Status { get; set; }
 
-        public Application()
+        public Application(string email, string password, string confirm)
         {
-            HasBeenValidated = false;
+            Email = email;
+            Password = password;
+            Confirmation = confirm;
+            IsValid = false;
+            Status = ApplicationStatus.Pending;
+
+            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+            {
+                throw new InvalidOperationException("Can't submit an application without an email or password");
+            }
         }
     }
 
     public enum ApplicationStatus
     {
         Pending,
-        Validated,
+        Denied,
         Accepted,
     }
 }
