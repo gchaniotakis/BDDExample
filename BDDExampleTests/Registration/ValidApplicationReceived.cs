@@ -53,7 +53,7 @@ namespace BDDExampleTests.Registration
 
         public void AMessageIsProvidedForUser()
         {
-            Assert.Equal("Welcome", _result.Message);
+            Assert.Equal("Welcome", _result.Application.UserMessage);
         }
 
         [Fact(DisplayName ="Application is Validated")]
