@@ -18,4 +18,8 @@
     <Folder Include="Reminders\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BDDExample\BDDExample.csproj" />
+  </ItemGroup>
+
 </Project>

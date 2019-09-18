@@ -1,91 +1,14 @@
-﻿using System;
+﻿using BDDExample.Models;
+using BDDExample.Services;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
 
+
 namespace BDDExampleTests.Registration
 {
-    public enum UserStatus
-    {
-        Pending
-    }
-
-    public class UserActivityLog
-    {
-        public string Subject { get; set; }
-        public string Entry { get; set; }
-        public Guid UserId { get; set; }
-        public Guid Id { get; set; }
-        public DateTime CreatedAt { get; set; }
-
-        public UserActivityLog()
-        {
-            CreatedAt = DateTime.Now;
-        }
-    }
-
-    public class UserMailerLog
-    {
-        public Guid Id { get; set; }
-        public Guid UserId { get; set; }
-        public string Subject { get; set; }
-        public string Body { get; set; }
-        public DateTime CreatedAt { get; set; }
-
-        public UserMailerLog()
-        {
-            CreatedAt = DateTime.Now;
-            Id = Guid.NewGuid();
-        }
-    }
-
-    public class User
-    {
-       public User()
-        {
-            Status = UserStatus.Pending;
-            Id = Guid.NewGuid();
-            Logs = new List<UserActivityLog>();
-            MailerLogs = new List<UserMailerLog>();
-            CreatedAt = DateTime.Now;
-        }
-
-        public UserStatus Status;
-        public Guid Id { get; set; }
-        public ICollection<UserActivityLog> Logs { get; set; }
-        public string Email { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public ICollection<UserMailerLog> MailerLogs { get; set; }
-    }
-
-    public class RegistrationResult
-    {
-        public User NewUser { get; set; }
-        public string Message { get; set; }
-        public bool Success { get; set; }
-
-        public RegistrationResult()
-        {
-            Success = false; 
-        }
-
-    }
-
-    public class Registrator
-    {
-        public RegistrationResult ApplyForMembership()
-        {
-            var result = new RegistrationResult();
-            result.Message = "Welcome";
-            result.NewUser = new User();
-            result.NewUser.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User" + result.NewUser.Email + "successfully registered!", UserId = result.NewUser.Id });
-            result.NewUser.MailerLogs.Add(new UserMailerLog { Subject = "Please confirm your E-mail", Body = "Lorem Ipsum", UserId = result.NewUser.Id } );
-            return result;
-        }
-    }
-
-
-
+    
     [Trait("A Valid Application is Submitted", "")]
     public class ValidApplicationReceived
     {
@@ -96,7 +19,8 @@ namespace BDDExampleTests.Registration
         public ValidApplicationReceived()
         {
             _reg = new Registrator();
-            _result = _reg.ApplyForMembership();
+            var app = new Application();
+            _result = _reg.ApplyForMembership(app);
             _user = _result.NewUser;
         }
 
@@ -132,6 +56,11 @@ namespace BDDExampleTests.Registration
             Assert.Equal("Welcome", _result.Message);
         }
 
+        [Fact(DisplayName ="Application is Validated")]
+        public void ApplicationValidated()
+        {
+            Assert.True(_result.Application.HasBeenValidated);
+        }
        
     }
 }
