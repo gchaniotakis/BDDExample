@@ -8,13 +8,8 @@ using BDDExample.Models;
 namespace BDDExampleTests.Registration
 {
     [Trait("An application is received with empty email or password", "")]
-    public class EmptyEmailOrPassword
-    {
-        RegistrationResult _result;
-        public EmptyEmailOrPassword()
-        {
-            var app = new Application("","password","password");
-        }
+    public class EmptyEmailOrPassword    {
+
 
         [Fact(DisplayName = "An exception is thrown with empty email")]
         public void ApplicationInvalid()
