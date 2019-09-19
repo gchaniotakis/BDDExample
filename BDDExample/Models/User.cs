@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace BDDExample.Models
@@ -18,6 +19,7 @@ namespace BDDExample.Models
         public UserStatus Status;
         public Guid Id { get; set; }
         public ICollection<UserActivityLog> Logs { get; set; }
+        [MaxLength(255)]
         public string Email { get; set; }
         public DateTime CreatedAt { get; set; }
         public ICollection<UserMailerLog> MailerLogs { get; set; }

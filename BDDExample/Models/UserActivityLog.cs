@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace BDDExample.Models
 {
     public class UserActivityLog
     {
+        [MaxLength(255)]
         public string Subject { get; set; }
         public string Entry { get; set; }
         public Guid UserId { get; set; }
