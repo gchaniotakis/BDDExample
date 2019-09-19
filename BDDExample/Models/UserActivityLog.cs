@@ -13,10 +13,12 @@ namespace BDDExample.Models
         public Guid UserId { get; set; }
         public Guid Id { get; set; }
         public DateTime CreatedAt { get; set; }
+        public string Data { get; set; }
 
         public UserActivityLog()
         {
             CreatedAt = DateTime.Now;
+            Id = Guid.NewGuid();
         }
     }
 }

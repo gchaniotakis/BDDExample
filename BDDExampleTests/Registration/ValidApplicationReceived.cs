@@ -1,4 +1,5 @@
-﻿using BDDExample.Models;
+﻿using BDDExample.DB;
+using BDDExample.Models;
 using BDDExample.Services;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace BDDExampleTests.Registration
 {
     
     [Trait("A Valid Application is Submitted", "")]
-    public class ValidApplicationReceived
+    public class ValidApplicationReceived : IDisposable
     {
         Registrator _reg;
         RegistrationResult _result;
@@ -61,6 +62,10 @@ namespace BDDExampleTests.Registration
         {
             Assert.True(_result.Application.IsValid);
         }
-       
+
+        public void Dispose()
+        {
+            new ApplicationDbContext().Database.ExecuteSqlCommand("DELETE FROM Users");
+        }
     }
 }

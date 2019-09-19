@@ -7,6 +7,37 @@ using BDDExample.Models;
 
 namespace BDDExampleTests.Registration
 {
+    [Trait("Application has an email that already exists","")]
+    public class ExistingEmail
+    {
+        RegistrationResult _result;
+        public ExistingEmail()
+        {
+            var app1 = new Application("ex.ist@bewise.gr", "password", "password");
+            _result = new Registrator().ApplyForMembership(app1);
+        }
+
+        [Fact (DisplayName ="Initial application succeeds")]
+        public void AppIsInDB()
+        {
+            Assert.Equal(ApplicationStatus.Accepted, _result.Application.Status);
+        }
+
+        [Fact(DisplayName ="App doesn't throw")]
+        public void AppDoesntThrow()
+        {
+            var app2 = new Application("ex.ist@bewise.gr", "password", "password");
+            //Assert.Throws(() => _result = new Registrator().ApplyForMembership(app2));
+            
+        }
+
+        [Fact(DisplayName ="Application is invalid")]
+        public void ApplicationIsInvalid()
+        {
+            Assert.Contains("ex", _result.Application.Email);
+        }
+    }
+
     [Trait("Application has an email with 5 characters", "")]
     public class ShortEmail
     {

@@ -13,11 +13,13 @@ namespace TaskRunner
         static void Main(string[] args)
         {
             var dbcontext = new ApplicationDbContext();
-            var user = new User { Email="g.chaniotakis@bewise.gr"};
-            Console.WriteLine(user.Id);
+            
+            foreach(var log in dbcontext.ActivityLogs)
+            {
+                Console.WriteLine(log.Data);
+            }
 
-            dbcontext.Users.Add(user);
-            dbcontext.SaveChanges();
+
             Console.WriteLine("Done!");
             Console.Read();
         }

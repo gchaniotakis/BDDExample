@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Text;
+using BDDExample.DB;
 using BDDExample.Models;
 
 namespace BDDExample.Services
@@ -36,12 +38,19 @@ namespace BDDExample.Services
             result.Application =ValidateApplication(app);
             if(result.Application.IsValid)
             {
-                result.Application.UserMessage = "Welcome";
-                result.NewUser = new User();
-                result.NewUser.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User" + result.NewUser.Email + "successfully registered!", UserId = result.NewUser.Id });
-                result.NewUser.MailerLogs.Add(new UserMailerLog { Subject = "Please confirm your E-mail", Body = "Lorem Ipsum", UserId = result.NewUser.Id });
-                result.Application.IsValid = true;
-                result.Application.Status = ApplicationStatus.Accepted;
+                using (var db = new ApplicationDbContext())
+                {
+                    result.Application.UserMessage = "Welcome";
+                    result.NewUser = new User();
+                    result.NewUser.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User" + result.NewUser.Email + "successfully registered!", UserId = result.NewUser.Id });
+                    result.NewUser.MailerLogs.Add(new UserMailerLog { Subject = "Please confirm your E-mail", Body = "Lorem Ipsum", UserId = result.NewUser.Id });
+                    result.Application.IsValid = true;
+                    result.Application.Status = ApplicationStatus.Accepted;
+                    db.Users.Add(result.NewUser);
+                    db.SaveChanges();
+                    
+                }
+
             }
             else
             {
