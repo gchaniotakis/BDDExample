@@ -19,11 +19,11 @@ namespace BDDExample.Services
 
     public class Registrator
     {
-        Application _app;
+        Application CurrentApplication;
 
         bool EmailOrPasswordNotPresent()
         {
-            return string.IsNullOrWhiteSpace(_app.Email) || string.IsNullOrWhiteSpace(_app.Password);
+            return string.IsNullOrWhiteSpace(CurrentApplication.Email) || string.IsNullOrWhiteSpace(CurrentApplication.Password);
         }
 
         public virtual bool EmailAlreadyRegistered()
@@ -31,7 +31,7 @@ namespace BDDExample.Services
             var exists = false;
             using (var db = new ApplicationDbContext())
             {
-                exists = db.Users.FirstOrDefaultAsync(x => x.Email == _app.Email) != null;
+                exists = db.Users.FirstOrDefaultAsync(x => x.Email == CurrentApplication.Email) != null;
             }
 
             return exists;
@@ -39,24 +39,24 @@ namespace BDDExample.Services
 
         public virtual bool EmailIsInvalid()
         {
-            return _app.Email.Length <= 5;
+            return CurrentApplication.Email.Length <= 5;
         }
 
         public virtual bool PasswordIsInvalid()
         {
-            return _app.Password.Length <= 4;
+            return CurrentApplication.Password.Length <= 4;
         }
 
         public virtual bool PasswordMatchesConfirmation()
         {
-            return _app.Password.Equals(_app.Confirmation);
+            return CurrentApplication.Password.Equals(CurrentApplication.Confirmation);
         }
 
         public RegistrationResult InvalidApplication(string reason)
         {
             var result = new RegistrationResult();
-            _app.Status = ApplicationStatus.Invalid;
-            result.Application = _app;
+            CurrentApplication.Status = ApplicationStatus.Invalid;
+            result.Application = CurrentApplication;
             result.Application.UserMessage = reason;
             return result;
             
@@ -64,39 +64,70 @@ namespace BDDExample.Services
 
         public virtual string HashPassword()
         {
-           return BCryptHelper.HashPassword(_app.Password, BCryptHelper.GenerateSalt(10));
+           return BCryptHelper.HashPassword(CurrentApplication.Password, BCryptHelper.GenerateSalt(10));
         }
 
-        public virtual RegistrationResult ApplicationAccepted()
+        public virtual void SendConfirmationRequest(User user)
         {
-            var result = new RegistrationResult();
+            user.MailerLogs.Add(new UserMailerLog { Subject = "Email confirmation", Body = "Dear user " + user.Email + " follow this link to confirm your email" });
+        }
+
+        public virtual User CreateUserFromApplication()
+        {
+            var user = new User { Email = CurrentApplication.Email, HashedPassword = HashPassword() };
+            using(var db = new ApplicationDbContext())
+            {
+                
+                user.Status = UserStatus.Pending;
+                
+
+
+            }
+            return user;
+        }
+
+        public virtual void SaveNewUser(User user)
+        {
             using (var db = new ApplicationDbContext())
             {
-                _app.Status = ApplicationStatus.Invalid;
-                result.Application = _app;
-                result.Application.UserMessage = "Welcome!";
-                var user = new User { Email = _app.Email, HashedPassword = HashPassword() };
-                user.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User " + user.Email + " was successfully created" });
-                user.Status = UserStatus.Pending;
-                user.MailerLogs.Add(new UserMailerLog { Subject = "Email confirmation", Body = "Dear user " + user.Email + " follow this link to confirm your email" });
                 db.Users.Add(user);
                 db.SaveChanges();
-                result.NewUser = user;
             }
+        }
 
-            return result;        
-            
+        public virtual User AcceptApplication()
+        {
+           
 
+            //set the status
+            CurrentApplication.Status = ApplicationStatus.Accepted;
+
+
+
+            //create the new user
+            var user = CreateUserFromApplication();
+
+            //log the registration
+            user.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User " + user.Email + " was successfully created" });
+
+            //send email
+            SendConfirmationRequest(user);
+            user.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "Email confirmation request sent" });
+
+            //save user
+            SaveNewUser(user);
+            return user;
 
         }
 
         public RegistrationResult ApplyForMembership(Application app)
         {
-            _app = app;
+            CurrentApplication = app;
+            var result = new RegistrationResult();
+            result.Application = app;
+            result.Application.UserMessage = "Welcome!";
 
-            var resutlt = new RegistrationResult();
-
-            if(EmailOrPasswordNotPresent())
+            if (EmailOrPasswordNotPresent())
             {
                 return InvalidApplication("Email and password are required");
             }
@@ -121,7 +152,8 @@ namespace BDDExample.Services
                 return InvalidApplication("This email already exists");
             }
 
-            return ApplicationAccepted();
+            result.NewUser = AcceptApplication();             
+            return result;
         }
     }
 
