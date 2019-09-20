@@ -18,48 +18,104 @@ namespace BDDExample.Services
 
     public class Registrator
     {
-        public virtual Application ValidateApplication(Application app)
+        Application _app;
+
+        bool EmailOrPasswordNotPresent()
         {
-            if (app.Email.Length < 6)
-            {
-                app.IsValid = false;
-                app.UserMessage = Properties.Resources.InvalidEmailMessage;
-                app.Status = ApplicationStatus.Denied;
-            }
-            else
-            {
-                app.IsValid = true;
-            }   
-            return app;
+            return string.IsNullOrWhiteSpace(_app.Email) || string.IsNullOrWhiteSpace(_app.Password);
         }
-        public RegistrationResult ApplyForMembership(Application app)
+
+        public virtual bool EmailAlreadyRegistered()
+        {
+            var exists = false;
+            using (var db = new ApplicationDbContext())
+            {
+                exists = db.Users.FirstOrDefaultAsync(x => x.Email == _app.Email) != null;
+            }
+
+            return exists;
+        }
+
+        public virtual bool EmailIsInvalid()
+        {
+            return _app.Email.Length <= 5;
+        }
+
+        public virtual bool PasswordIsInvalid()
+        {
+            return _app.Password.Length <= 4;
+        }
+
+        public virtual bool PasswordMatchesConfirmation()
+        {
+            return _app.Password.Equals(_app.Confirmation);
+        }
+
+        public RegistrationResult InvalidApplication(string reason)
         {
             var result = new RegistrationResult();
-            result.Application =ValidateApplication(app);
-            if(result.Application.IsValid)
-            {
-                using (var db = new ApplicationDbContext())
-                {
-                    result.Application.UserMessage = "Welcome";
-                    result.NewUser = new User();
-                    result.NewUser.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User" + result.NewUser.Email + "successfully registered!", UserId = result.NewUser.Id });
-                    result.NewUser.MailerLogs.Add(new UserMailerLog { Subject = "Please confirm your E-mail", Body = "Lorem Ipsum", UserId = result.NewUser.Id });
-                    result.Application.IsValid = true;
-                    result.Application.Status = ApplicationStatus.Accepted;
-                    db.Users.Add(result.NewUser);
-                    db.SaveChanges();
-                    
-                }
-
-            }
-            else
-            {
-                result.Application.IsValid = false;
-                result.Application.UserMessage = "Your application is invalid.";
-            }
-
+            _app.Status = ApplicationStatus.Invalid;
+            result.Application = _app;
+            result.Application.UserMessage = reason;
             return result;
+            
+        }
 
+        public virtual RegistrationResult ApplicationAccepted()
+        {
+            var result = new RegistrationResult();
+            using (var db = new ApplicationDbContext())
+            {
+                _app.Status = ApplicationStatus.Invalid;
+                result.Application = _app;
+                result.Application.UserMessage = "Welcome!";
+                var user = new User { Email = _app.Email };
+                user.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User " + user.Email + " was successfully created" });
+                user.Status = UserStatus.Pending;
+                user.MailerLogs.Add(new UserMailerLog { Subject = "Email confirmation", Body = "Dear user " + user.Email + " follow this link to confirm your email" });
+                db.Users.Add(user);
+                db.SaveChanges();
+                result.NewUser = user;
+            }
+
+            return result;        
+            
+
+
+        }
+
+        public RegistrationResult ApplyForMembership(Application app)
+        {
+            _app = app;
+
+            var resutlt = new RegistrationResult();
+
+            if(EmailOrPasswordNotPresent())
+            {
+                return InvalidApplication("Email and password are required");
+            }
+
+            if(EmailIsInvalid())
+            {
+                return InvalidApplication("Email is not valid");
+            }
+
+            if(PasswordIsInvalid())
+            {
+                return InvalidApplication("Password is invalid");
+            }
+
+            if(!PasswordMatchesConfirmation())
+            {
+                return InvalidApplication("The two passwords don't match");
+            }
+
+            if(EmailAlreadyRegistered())
+            {
+                return InvalidApplication("This email already exists");
+            }
+
+            return ApplicationAccepted();
         }
     }
 

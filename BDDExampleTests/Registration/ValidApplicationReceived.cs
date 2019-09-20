@@ -20,6 +20,7 @@ namespace BDDExampleTests.Registration
         public ValidApplicationReceived()
         {
             _reg = new Registrator();
+            new ApplicationDbContext().Database.ExecuteSqlCommand("DELETE FROM Users");
             var app = new Application(email: "g.chaniotakis@bewise.gr", password:"password",confirm:"password");
             _result = _reg.ApplyForMembership(app);
             _user = _result.NewUser;

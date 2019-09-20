@@ -33,5 +33,6 @@ namespace BDDExample.Models
         Pending,
         Denied,
         Accepted,
+        Invalid
     }
 }
