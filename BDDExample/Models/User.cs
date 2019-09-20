@@ -16,13 +16,16 @@ namespace BDDExample.Models
             CreatedAt = DateTime.Now;
         }
 
-        public UserStatus Status;
-        public Guid Id { get; set; }
-        public ICollection<UserActivityLog> Logs { get; set; }
         [MaxLength(255)]
         public string Email { get; set; }
-        public DateTime CreatedAt { get; set; }
+        [MaxLength(500)]
+        [Required]
+        public string HashedPassword { get; set; }
+        public Guid Id { get; set; }
+        public UserStatus Status;
+        public ICollection<UserActivityLog> Logs { get; set; }
         public ICollection<UserMailerLog> MailerLogs { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
     public enum UserStatus

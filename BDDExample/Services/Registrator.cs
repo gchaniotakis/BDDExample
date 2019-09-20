@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Text;
 using BDDExample.DB;
 using BDDExample.Models;
+using DevOne.Security.Cryptography.BCrypt;
 
 namespace BDDExample.Services
 {
@@ -61,6 +62,11 @@ namespace BDDExample.Services
             
         }
 
+        public virtual string HashPassword()
+        {
+           return BCryptHelper.HashPassword(_app.Password, BCryptHelper.GenerateSalt(10));
+        }
+
         public virtual RegistrationResult ApplicationAccepted()
         {
             var result = new RegistrationResult();
@@ -69,7 +75,7 @@ namespace BDDExample.Services
                 _app.Status = ApplicationStatus.Invalid;
                 result.Application = _app;
                 result.Application.UserMessage = "Welcome!";
-                var user = new User { Email = _app.Email };
+                var user = new User { Email = _app.Email, HashedPassword = HashPassword() };
                 user.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User " + user.Email + " was successfully created" });
                 user.Status = UserStatus.Pending;
                 user.MailerLogs.Add(new UserMailerLog { Subject = "Email confirmation", Body = "Dear user " + user.Email + " follow this link to confirm your email" });
