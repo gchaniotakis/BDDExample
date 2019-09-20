@@ -6,7 +6,7 @@ namespace BDDExample.Models
 {
     public class Application
     {
-        public bool IsValid { get; set; }
+        
         public string Email { get; set; }
         public string Password { get; set; }
         public string Confirmation { get; set; }
@@ -17,14 +17,23 @@ namespace BDDExample.Models
         {
             Email = email;
             Password = password;
-            Confirmation = confirm;
-            IsValid = false;
-            Status = ApplicationStatus.Pending;
+            Confirmation = confirm;           
+            Status = ApplicationStatus.NotProcessed;
+        }
 
-            if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
-            {
-                throw new InvalidOperationException("Can't submit an application without an email or password");
-            }
+        public bool IsAccpeted()
+        {
+            return Status == ApplicationStatus.Accepted;
+        }
+        public bool IsInvalid()
+        {
+            return !IsValid();
+        }
+
+        public bool IsValid()
+        {
+            return Status == ApplicationStatus.Validated ||
+                Status == ApplicationStatus.Accepted;
         }
     }
 
@@ -33,6 +42,8 @@ namespace BDDExample.Models
         Pending,
         Denied,
         Accepted,
-        Invalid
+        Invalid, 
+        NotProcessed,
+        Validated
     }
 }

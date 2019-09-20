@@ -26,6 +26,12 @@ namespace BDDExampleTests.Registration
             _user = _result.NewUser;
         }
 
+        [Fact(DisplayName="Application is Accepted")]
+        public void ApplicationIsAccepted()
+        {
+            Assert.True(_result.Application.IsAccpeted());
+        }
+
         [Fact(DisplayName ="A user is added to the system")]
         public void UserIsAddedToSystem()
         {
@@ -61,7 +67,7 @@ namespace BDDExampleTests.Registration
         [Fact(DisplayName ="Application is Validated")]
         public void ApplicationValidated()
         {
-            Assert.True(_result.Application.IsValid);
+            Assert.True(_result.Application.IsValid());
         }
 
         public void Dispose()
