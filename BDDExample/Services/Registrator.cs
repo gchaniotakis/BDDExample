@@ -107,12 +107,12 @@ namespace BDDExample.Services
             //create the new user
             var user = CreateUserFromApplication();
 
-            //log the registration
-            user.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "User " + user.Email + " was successfully created" });
+            //log the registration            
+            user.AddLogEntry("Registration", "User " + user.Email +" was succesfully created");
 
             //send email
-            SendConfirmationRequest(user);
-            user.Logs.Add(new UserActivityLog { Subject = "Registration", Entry = "Email confirmation request sent" });
+            SendConfirmationRequest(user);            
+            user.AddLogEntry("Registration",  "Email confirmation request sent");
 
             //save user
             SaveNewUser(user);
