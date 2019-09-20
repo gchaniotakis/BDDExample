@@ -11,16 +11,15 @@ namespace BDDExampleTests.Registration
 {
     
     [Trait("A Valid Application is Submitted", "")]
-    public class ValidApplicationReceived : IDisposable
+    public class ValidApplicationReceived : TestBase
     {
         Registrator _reg;
         RegistrationResult _result;
         User _user;
 
-        public ValidApplicationReceived()
+        public ValidApplicationReceived() :base ()
         {
-            _reg = new Registrator();
-            new ApplicationDbContext().Database.ExecuteSqlCommand("DELETE FROM Users");
+            _reg = new Registrator();            
             var app = new Application(email: "g.chaniotakis@bewise.gr", password:"password",confirm:"password");
             _result = _reg.ApplyForMembership(app);
             _user = _result.NewUser;
@@ -70,9 +69,6 @@ namespace BDDExampleTests.Registration
             Assert.True(_result.Application.IsValid());
         }
 
-        public void Dispose()
-        {
-            new ApplicationDbContext().Database.ExecuteSqlCommand("DELETE FROM Users");
-        }
+
     }
 }
