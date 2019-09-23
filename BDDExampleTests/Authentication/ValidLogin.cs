@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BDDExample.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,16 +11,24 @@ namespace BDDExampleTests.Authentication
     [Trait("Authentication", "Valid Login")]
     public class ValidLogin
     {
+        AuthenticationResult _result;
+
+        public ValidLogin()
+        {
+            var auth = new Authenticator();
+            _result = auth.AuthenticateUser(new Credentials{Email = "g.chaniotakis@bewise.gr", Password = "password"});
+        }
+
         [Fact(DisplayName ="User authenticated")]
         public void AuthenticateUser()
         {
-
+            Assert.True(_result.Authenticated);
         }
 
         [Fact(DisplayName ="Log entry created")]
         public void CreateLogEntry()
         {
-
+            Assert.True(_result.User.Logs.Count > 0);
         }
 
         [Fact(DisplayName ="Remember me token is created")]
