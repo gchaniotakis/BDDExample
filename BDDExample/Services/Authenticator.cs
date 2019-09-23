@@ -1,4 +1,5 @@
-﻿using BDDExample.Models;
+﻿using BDDExample.DB;
+using BDDExample.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +31,9 @@ namespace BDDExample.Services
             CurrentCredentials = creds;
             if (EmailOrPasswordNotPresent())
                 return InvalidLogin("Email and Password are required to log in");
-            var user = new User();
+            var user = LocateUser();
+            if (user == null)
+                return InvalidLogin("Invalid email or password");
             user.AddLogEntry("Login", "User loggeed in");
             CreateSession(user);
             result.Authenticated = true;
@@ -52,6 +55,17 @@ namespace BDDExample.Services
         private bool EmailOrPasswordNotPresent()
         {
             return string.IsNullOrWhiteSpace(CurrentCredentials.Email) || string.IsNullOrWhiteSpace(CurrentCredentials.Password);
+        }
+
+        public virtual User LocateUser()
+        {
+            User user = null;
+            using(var db = new ApplicationDbContext() )
+            {
+                user = db.Users.FirstOrDefault(x => x.Email == CurrentCredentials.Email);                
+            }
+
+            return user;
         }
     }
 }
