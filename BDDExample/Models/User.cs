@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Text;
 
 namespace BDDExample.Models
@@ -14,6 +15,7 @@ namespace BDDExample.Models
             Logs = new List<UserActivityLog>();
             MailerLogs = new List<UserMailerLog>();
             CreatedAt = DateTime.Now;
+            Sessions = new List<UserSession>();
         }
 
         [MaxLength(255)]
@@ -27,16 +29,24 @@ namespace BDDExample.Models
         public UserStatus Status;
         public ICollection<UserActivityLog> Logs { get; set; }
         public ICollection<UserMailerLog> MailerLogs { get; set; }
+        public ICollection<UserSession> Sessions { get; set; }
         public DateTime CreatedAt { get; set; }
 
         public void AddLogEntry(string subject, string entry)
         {
             Logs.Add(new UserActivityLog { Subject = subject, Entry = entry });
         }
+
+        public UserSession CurrentSession {
+            get
+            {
+                return Sessions.OrderByDescending(x => x.FinishedAt).FirstOrDefault();
+            }
+        }
     }
 
     public enum UserStatus
     {
-        Pending
+        Pending = 1
     }
 }

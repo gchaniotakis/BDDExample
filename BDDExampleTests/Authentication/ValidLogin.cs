@@ -9,7 +9,7 @@ using Xunit;
 namespace BDDExampleTests.Authentication
 {
     [Trait("Authentication", "Valid Login")]
-    public class ValidLogin
+    public class ValidLogin : TestBase
     {
         AuthenticationResult _result;
 
@@ -25,34 +25,42 @@ namespace BDDExampleTests.Authentication
             Assert.True(_result.Authenticated);
         }
 
+        [Fact(DisplayName ="User is returned")]
+        public void UserReturned()
+        {
+            Assert.NotNull(_result.User);
+        }
+
         [Fact(DisplayName ="Log entry created")]
         public void CreateLogEntry()
         {
             Assert.True(_result.User.Logs.Count > 0);
         }
 
-        [Fact(DisplayName ="Remember me token is created")]
+        [Fact(DisplayName ="A session is created")]
+        public void SessionCreated()
+        {
+            Assert.True(_result.User.Sessions.Count > 0);
+        }
+
+        [Fact(DisplayName ="User has current session")]
         public void RememberMeTokenCreated()
         {
-
+            Assert.NotNull(_result.User.CurrentSession);
         }
 
-        [Fact(DisplayName ="Remember me expires in 30 days")]
+        [Fact(DisplayName ="Session expires in 30 days")]
         public void RememberMeExpiresIn30Days()
         {
-
+            Assert.True(_result.User.CurrentSession.FinishedAt == DateTime.Today.AddDays(30));
         }
 
-        [Fact(DisplayName ="User is returned")]
-        public void UserReturned()
-        {
 
-        }
 
         [Fact(DisplayName ="A welcome message is provided")]
         public void WelcomeMessageProvided()
         {
-
+            Assert.Contains("Welcome", _result.Message);
         }
         
     }

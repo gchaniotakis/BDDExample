@@ -28,11 +28,30 @@ namespace BDDExample.Services
         {
             var result = new AuthenticationResult();
             CurrentCredentials = creds;
+            if (EmailOrPasswordNotPresent())
+                return InvalidLogin("Email and Password are required to log in");
             var user = new User();
             user.AddLogEntry("Login", "User loggeed in");
+            CreateSession(user);
             result.Authenticated = true;
             result.User = user;
+            result.Message = "Welcome back!";
             return result;
+        }
+
+        private AuthenticationResult InvalidLogin(string message)
+        {
+            return new AuthenticationResult { Message = message, Authenticated = false };
+        }
+
+        public virtual void CreateSession(User user)
+        {
+            user.Sessions.Add(new UserSession(user.Id));
+        }
+
+        private bool EmailOrPasswordNotPresent()
+        {
+            return string.IsNullOrWhiteSpace(CurrentCredentials.Email) || string.IsNullOrWhiteSpace(CurrentCredentials.Password);
         }
     }
 }
