@@ -1,5 +1,6 @@
 ﻿using BDDExample.DB;
 using BDDExample.Models;
+using DevOne.Security.Cryptography.BCrypt;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,7 @@ namespace BDDExample.Services
     {
         Credentials CurrentCredentials;
 
+
         public AuthenticationResult AuthenticateUser(Credentials creds)
         {
             var result = new AuthenticationResult();
@@ -34,12 +36,20 @@ namespace BDDExample.Services
             var user = LocateUser();
             if (user == null)
                 return InvalidLogin("Invalid email or password");
+            if (HashedPasswordDoesNotMatch(user))
+                return InvalidLogin("Invalid password");
             user.AddLogEntry("Login", "User loggeed in");
             CreateSession(user);
+            SaveUserLogin(user);
             result.Authenticated = true;
             result.User = user;
             result.Message = "Welcome back!";
             return result;
+        }
+
+        public virtual bool HashedPasswordDoesNotMatch(User user)
+        {
+            return !BCryptHelper.CheckPassword(CurrentCredentials.Password, user.HashedPassword);
         }
 
         private AuthenticationResult InvalidLogin(string message)
@@ -66,6 +76,14 @@ namespace BDDExample.Services
             }
 
             return user;
+        }
+
+        public virtual void SaveUserLogin(User user)
+        {
+            using (var db = new ApplicationDbContext())
+            {
+                db.SaveChanges();
+            }
         }
     }
 }

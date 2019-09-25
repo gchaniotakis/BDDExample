@@ -1,4 +1,5 @@
-﻿using BDDExample.Services;
+﻿using BDDExample.Models;
+using BDDExample.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace BDDExampleTests.Authentication
 
         public ValidLogin()
         {
+            var app = new Application("g.chaniotakis@bewise.gr", "password", "password");
+            new Registrator().ApplyForMembership(app);
             var auth = new Authenticator();
             _result = auth.AuthenticateUser(new Credentials{Email = "g.chaniotakis@bewise.gr", Password = "password"});
         }
