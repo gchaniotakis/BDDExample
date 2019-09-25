@@ -24,8 +24,8 @@ namespace BDDExample.Services
 
     public class Authenticator
     {
-        Credentials CurrentCredentials;
-
+        private Credentials CurrentCredentials;
+        private ApplicationDbContext _db;
 
         public AuthenticationResult AuthenticateUser(Credentials creds)
         {
@@ -40,7 +40,7 @@ namespace BDDExample.Services
                 return InvalidLogin("Invalid password");
             user.AddLogEntry("Login", "User loggeed in");
             CreateSession(user);
-            SaveUserLogin(user);
+            UserAuthenticated(user);
             result.Authenticated = true;
             result.User = user;
             result.Message = "Welcome back!";
@@ -54,6 +54,8 @@ namespace BDDExample.Services
 
         private AuthenticationResult InvalidLogin(string message)
         {
+            if (_db != null)
+                _db.Dispose();
             return new AuthenticationResult { Message = message, Authenticated = false };
         }
 
@@ -69,21 +71,15 @@ namespace BDDExample.Services
 
         public virtual User LocateUser()
         {
-            User user = null;
-            using(var db = new ApplicationDbContext() )
-            {
-                user = db.Users.FirstOrDefault(x => x.Email == CurrentCredentials.Email);                
-            }
-
-            return user;
+            return _db.Users.FirstOrDefault(x => x.Email == CurrentCredentials.Email);
         }
 
-        public virtual void SaveUserLogin(User user)
+        public virtual void UserAuthenticated(User user)
         {
-            using (var db = new ApplicationDbContext())
-            {
-                db.SaveChanges();
-            }
+            _db.SaveChanges();
+            _db.Dispose();
         }
+
+        
     }
 }
