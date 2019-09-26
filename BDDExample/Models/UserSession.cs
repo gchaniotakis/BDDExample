@@ -17,7 +17,7 @@ namespace BDDExample.Models
         [MaxLength(55)]
         public string IP { get; set; }
 
-        public UserSession(Guid userid)
+        public UserSession()
         {
             StartedAt = DateTime.Now;
             Id = Guid.NewGuid();            
