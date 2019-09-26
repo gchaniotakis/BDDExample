@@ -44,7 +44,7 @@ namespace BDDExample.Models
         [Required]
         public int SignInCount { get; set; }
         public Guid ReminderToken { get; set; }
-        public DateTime? reminderSentAt { get; set; }
+        public DateTime? ReminderSentAt { get; set; }
 
 
         public void AddLogEntry(string subject, string entry)

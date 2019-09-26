@@ -61,11 +61,101 @@ namespace BDDExample.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This email appears to be invalid..
+        ///   Looks up a localized string similar to This email already exists.
+        /// </summary>
+        internal static string EmailExists {
+            get {
+                return ResourceManager.GetString("EmailExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email was not found.
+        /// </summary>
+        internal static string EmailNotFound {
+            get {
+                return ResourceManager.GetString("EmailNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email and password are required.
+        /// </summary>
+        internal static string EmailOrPasswordMissing {
+            get {
+                return ResourceManager.GetString("EmailOrPasswordMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This email appears to be invalid.
         /// </summary>
         internal static string InvalidEmailMessage {
             get {
                 return ResourceManager.GetString("InvalidEmailMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid email or password.
+        /// </summary>
+        internal static string InvalidLogin {
+            get {
+                return ResourceManager.GetString("InvalidLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Password is invalid.
+        /// </summary>
+        internal static string InvalidPassword {
+            get {
+                return ResourceManager.GetString("InvalidPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The two passwords don&apos;t match.
+        /// </summary>
+        internal static string PasswordConfirmationMissmatch {
+            get {
+                return ResourceManager.GetString("PasswordConfirmationMissmatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The reset window has expired.
+        /// </summary>
+        internal static string PasswordResetExpired {
+            get {
+                return ResourceManager.GetString("PasswordResetExpired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your password was reset.
+        /// </summary>
+        internal static string PasswordResetSuccedful {
+            get {
+                return ResourceManager.GetString("PasswordResetSuccedful", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This token is invalid.
+        /// </summary>
+        internal static string PasswordResetTokenInvalid {
+            get {
+                return ResourceManager.GetString("PasswordResetTokenInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome back.
+        /// </summary>
+        internal static string UserAuthenticated {
+            get {
+                return ResourceManager.GetString("UserAuthenticated", resourceCulture);
             }
         }
     }
