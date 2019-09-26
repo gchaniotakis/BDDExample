@@ -8,17 +8,18 @@ namespace BDDExample.Models
     public class UserActivityLog
     {
         [MaxLength(255)]
+        [Required]
         public string Subject { get; set; }
+        [Required]
         public string Entry { get; set; }
-        public Guid UserId { get; set; }
-        public Guid Id { get; set; }
+        public virtual User User { get; set; }
+        public int Id { get; set; }
         public DateTime CreatedAt { get; set; }
-        public string Data { get; set; }
+        
 
         public UserActivityLog()
         {
-            CreatedAt = DateTime.Now;
-            Id = Guid.NewGuid();
+            CreatedAt = DateTime.Now;            
         }
     }
 }

@@ -39,11 +39,10 @@ namespace BDDExample.Models
 
     public enum ApplicationStatus
     {
-        Pending,
-        Denied,
-        Accepted,
-        Invalid, 
         NotProcessed,
-        Validated
+        Invalid,
+        Validated,
+        Accepted,
+        Denied
     }
 }

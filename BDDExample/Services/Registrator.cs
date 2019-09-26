@@ -69,7 +69,7 @@ namespace BDDExample.Services
 
         public virtual void SendConfirmationRequest(User user)
         {
-            user.MailerLogs.Add(new UserMailerLog { Subject = "Email confirmation", Body = "Dear user " + user.Email + " follow this link to confirm your email" });
+            user.MailerLogs.Add(new UserMailerMessage { Subject = "Email confirmation", Body = "Dear user " + user.Email + " follow this link to confirm your email" });
         }
 
         public virtual User CreateUserFromApplication()

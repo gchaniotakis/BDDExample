@@ -17,7 +17,7 @@ namespace BDDExample.DB
 
         public DbSet<User> Users { get; set; }
         public DbSet<UserActivityLog> ActivityLogs { get; set; }
-        public DbSet<UserMailerLog> MailerLogs { get; set; }
+        public DbSet<UserMailerMessage> MailerLogs { get; set; }
         public DbSet<UserSession> Sessions { get; set; }
     }
 }
