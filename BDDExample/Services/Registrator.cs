@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Text;
 using BDDExample.DB;
 using BDDExample.Models;
@@ -12,14 +13,20 @@ namespace BDDExample.Services
     {
         public User NewUser { get; set; }
         public Application Application { get; set; }
-
-
-
+        public Guid SessionToken { get; set; }
+        public bool Successful
+        {
+            get
+            {
+                return Application == null ? false : Application.IsAccpeted(); 
+            }
+        }
     }
 
     public class Registrator
     {
-        Application CurrentApplication;
+        private Application CurrentApplication;
+        private ApplicationDbContext _db;
 
         bool EmailOrPasswordNotPresent()
         {
@@ -28,12 +35,8 @@ namespace BDDExample.Services
 
         public virtual bool EmailAlreadyRegistered()
         {
-            var exists = false;
-            using (var db = new ApplicationDbContext())
-            {
-                exists = db.Users.FirstOrDefaultAsync(x => x.Email == CurrentApplication.Email) != null;
-            }
-
+            var exists = false;            
+            exists = _db.Users.FirstOrDefault(x => x.Email == CurrentApplication.Email) != null;
             return exists;
         }
 
@@ -74,25 +77,18 @@ namespace BDDExample.Services
 
         public virtual User CreateUserFromApplication()
         {
-            var user = new User { Email = CurrentApplication.Email, HashedPassword = HashPassword() };
-            using(var db = new ApplicationDbContext())
+            return new User
             {
-                
-                user.Status = UserStatus.Pending;
-                
-
-
-            }
-            return user;
+                Email = CurrentApplication.Email,
+                HashedPassword = HashPassword(),
+                Status = UserStatus.Pending
+            };
         }
 
         public virtual void SaveNewUser(User user)
-        {
-            using (var db = new ApplicationDbContext())
-            {
-                db.Users.Add(user);
-                db.SaveChanges();
-            }
+        {     
+            _db.Users.Add(user);
+            _db.SaveChanges();            
         }
 
         public virtual User AcceptApplication()
@@ -122,37 +118,39 @@ namespace BDDExample.Services
 
         public RegistrationResult ApplyForMembership(Application app)
         {
-            CurrentApplication = app;
             var result = new RegistrationResult();
+            CurrentApplication = app;            
             result.Application = app;
             result.Application.UserMessage = "Welcome!";
 
             if (EmailOrPasswordNotPresent())
             {
-                return InvalidApplication("Email and password are required");
+                return InvalidApplication(Properties.Resources.EmailOrPasswordMissing);
             }
 
             if(EmailIsInvalid())
             {
-                return InvalidApplication("Email is not valid");
+                return InvalidApplication(Properties.Resources.InvalidEmailMessage);
             }
 
             if(PasswordIsInvalid())
             {
-                return InvalidApplication("Password is invalid");
+                return InvalidApplication(Properties.Resources.InvalidPassword);
             }
 
             if(!PasswordMatchesConfirmation())
             {
-                return InvalidApplication("The two passwords don't match");
+                return InvalidApplication(Properties.Resources.PasswordConfirmationMissmatch);
             }
 
             if(EmailAlreadyRegistered())
             {
-                return InvalidApplication("This email already exists");
+                return InvalidApplication(Properties.Resources.EmailExists);
             }
 
-            result.NewUser = AcceptApplication();             
+            result.NewUser = AcceptApplication();
+            var auth = new Authenticator().AuthenticateUser(new Credentials { Email = result.NewUser.Email, Password = CurrentApplication.Password });
+            result.SessionToken = auth.Session.Id;
             return result;
         }
     }
