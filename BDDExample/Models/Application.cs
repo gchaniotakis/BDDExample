@@ -12,6 +12,7 @@ namespace BDDExample.Models
         public string Confirmation { get; set; }
         public ApplicationStatus Status { get; set; }
         public string UserMessage { get; set; }
+        public string PublicName { get; set; }
 
         public Application(string email, string password, string confirm)
         {

@@ -56,7 +56,7 @@ namespace BDDExample.Services
 
             else
             {
-                user = LocateUser();
+                user = LocateUser(creds.Email);
                 
                 if (user == null)
                 {
@@ -111,7 +111,7 @@ namespace BDDExample.Services
             return string.IsNullOrWhiteSpace(CurrentCredentials.Email) || string.IsNullOrWhiteSpace(CurrentCredentials.Password);
         }
 
-        public virtual User LocateUser()
+        public virtual User LocateUser(string email)
         {
             return _db.Users.FirstOrDefault(x => x.Email == CurrentCredentials.Email);
         }
