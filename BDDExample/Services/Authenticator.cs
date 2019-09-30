@@ -44,6 +44,17 @@ namespace BDDExample.Services
         private Credentials CurrentCredentials;
         private ApplicationDbContext _db;
 
+        internal AuthenticationResult AuthenticateUserByOpenAuth(string providerid, string ip)
+        {
+            throw new NotImplementedException();
+        }
+
+        private Configuration _config;
+        public Authenticator(Configuration config = null)
+        {
+            _config = config ?? new Configuration();
+        }
+
         public AuthenticationResult AuthenticateUser(Credentials creds)
         {
             var result = new AuthenticationResult();
@@ -84,6 +95,16 @@ namespace BDDExample.Services
             _db.Dispose();
             return result;
 
+        }
+
+        internal bool DisassociateOpenAuth(string email, string providerid)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal bool AssociateOpenAuth(string email, string provider, string providerid)
+        {
+            throw new NotImplementedException();
         }
 
         public virtual bool HashedPasswordDoesNotMatch(User user)

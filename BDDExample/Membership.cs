@@ -13,17 +13,15 @@ namespace BDDExample
         private Authenticator _auth;
         private Registrator _reg;
         private Reminder _rem;
-        public Membership(Authenticator auth, Registrator reg, Reminder rem)
+        public Membership(Configuration config)
         {
-            auth = _auth;
-            reg = _reg;
-            rem = _rem;
+            _auth = config.AuthenticationService ?? new Authenticator(config);
+            _reg = config.RegistrationService ?? new Registrator(config);
+            _rem = config.ReminderService ?? new Reminder(config);
         }
-        public Membership()
+        public Membership() : this (new Configuration())
         {
-            _auth = new Authenticator();
-            _reg = new Registrator();
-            _rem = new Reminder();
+
         }
 
         public AuthenticationResult Authenticate(string email, string password, string ip = "192.168.64.1")

@@ -34,7 +34,12 @@ namespace BDDExample.Services
 
     public class Reminder
     {
-        ApplicationDbContext _db;
+        private ApplicationDbContext _db;
+        private Configuration _config;
+        public Authenticator(Configuration config = null)
+        {
+            _config = config ?? new Configuration();
+        }
 
         public virtual UserMailerTemplate GetReminderMailer()
         {

@@ -27,6 +27,11 @@ namespace BDDExample.Services
     {
         private Application CurrentApplication;
         private ApplicationDbContext _db;
+        private Configuration _config;
+        public Registrator(Configuration config = null)
+        {
+            _config = config ?? new Configuration();
+        }
 
         bool EmailOrPasswordNotPresent()
         {
@@ -47,7 +52,7 @@ namespace BDDExample.Services
 
         public virtual bool PasswordIsInvalid()
         {
-            return CurrentApplication.Password.Length <= 4;
+            return CurrentApplication.Password.Length <= _config.MinPasswordLength;
         }
 
         public virtual bool PasswordMatchesConfirmation()
