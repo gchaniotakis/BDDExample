@@ -16,7 +16,7 @@ namespace TaskRunner
             
             foreach(var log in dbcontext.ActivityLogs)
             {
-                Console.WriteLine(log.Data);
+                Console.WriteLine(log.Entry);
             }
 
 
